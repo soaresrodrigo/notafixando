@@ -12,20 +12,20 @@ module.exports = {
 
   // Cadastro de notas
   async store (req, res) {
-    const { title, description } = req.body
-
-    const note = await Note.create({
-      title,
-      description
-    })
+    var note = await Note.create(req.body)
 
     return res.json(note)
   },
 
   // Remoção da nota
   async destroy(req, res){
-    await Note.findOneAndDelete(req.params.id)
 
-    return res.send("Excluído com sucesso")
+    try {
+      var data = await Note.findByIdAndDelete(req.params.id)
+      return res.send(data)
+    } catch (error) {
+      return res.send({error: "Não foi possível excluir"})
+    }
+
   }
 }
