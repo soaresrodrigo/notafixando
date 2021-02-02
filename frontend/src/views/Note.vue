@@ -1,22 +1,33 @@
 <template>
   <div>
-    <b-container fluid class="bg-light window">
-      <div class="p-3">
-        <!-- Buscar -->
+    <b-container class="bg-light window">
       <b-row>
-        <div class="col-sm-12 col-md-5 col-lg-5 mx-auto mb-5">
-          <b-form-input
-          type="search"
-          placeholder="procure a nota"
-        ></b-form-input>
+        <div class="text-secondary pt-5 pl-3 col-sm-12 col-md-12 col-lg-12 text-left">
+          <h1 class="h4">
+            <b-icon icon="card-text"></b-icon>
+            Notafixando
+          </h1>
+          <p>Gerencie todas as suas notas por aqui</p>
         </div>
-      </b-row>
+        <div class="col-sm-12 col-md-5 col-lg-5 mx-auto mb-5">
+          <b-input-group class="mt-3">
+            <b-form-input
+            class="text-center shadow-sm border-0"
+            type="search"
+            v-model="search"
+            placeholder="pesquise pelo título da nota"
+          ></b-form-input>
+            <b-input-group-append>
+              <b-btn v-b-toggle.sidebar-create variant="outline-primary">
+                <b-icon icon="plus"></b-icon>
+              </b-btn>
+            </b-input-group-append>
+          </b-input-group>
+        </div>
+        </b-row>
+      <div class="p-3">
       <!-- Cadastrar nota -->
       <div>
-        <b-btn v-b-toggle.sidebar-create variant="outline-primary" class="float-right">
-          <b-icon icon="plus"></b-icon>
-        </b-btn>
-
           <b-sidebar
             class="p-3"
             ref="mySidebar"
@@ -62,20 +73,30 @@
         </div>
       <!-- Notas -->
       <b-row>
-        <div v-for="note in notes" :key="note._id" class="col-sm-12 col-md-3 col-lg-3 mx-auto">
+        <div v-for="(note, index) in filteredList" :key="index" class="col-sm-12 col-md-3 col-lg-3">
           <b-card class="mb-3 text-center" :bg-variant="note.color" text-variant="white">
             <b-card-header>
               {{note.title}}
             </b-card-header>
             <b-card-text>{{note.description}}</b-card-text>
             <b-card-text>
-              <b-btn @click="deleteNote(note)" variant="transparent" class="text-right" title="Excluir nota?">
+              <b-btn @click="deleteNote(note, index)" variant="transparent" class="text-right" title="Excluir nota?">
                 <b-icon icon="trash" variant="white"></b-icon>
               </b-btn>
             </b-card-text>
           </b-card>
         </div>
       </b-row>
+
+      <div v-if="notes.length < 1">
+        <h1 class="text-center h4 text-secondary mt-5">
+          <p>
+            <b-icon icon="hourglass-split"></b-icon>
+            Por enquanto não existe nenhuma nota cadastrada...
+          </p>
+        </h1>
+      </div>
+
       </div>
     </b-container>
   </div>
@@ -88,6 +109,8 @@ export default {
   data: () => ({
     notes: [],
     load: false,
+    message: '',
+    search: '',
     form: {
       title: '',
       description: '',
@@ -97,7 +120,8 @@ export default {
       { text: '', value: 'primary' },
       { text: '', value: 'danger' },
       { text: '', value: 'warning' },
-      { text: '', value: 'success' }
+      { text: '', value: 'success' },
+      { text: '', value: 'dark' }
     ]
   }),
   methods: {
@@ -106,7 +130,7 @@ export default {
       try {
         var nota = await http.post('', this.form)
         this.$root.$emit('bv::toggle::collapse', 'sidebar-create')
-        this.notes.unshift(nota.data)
+        this.notes.push(nota.data)
         this.form.title = ''
         this.form.description = ''
         this.form.color = 'primary'
@@ -114,10 +138,10 @@ export default {
         console.log('tag', error)
       }
     },
-    async deleteNote (note) {
+    async deleteNote (note, index) {
       try {
+        this.notes.splice(index, 1)
         await http.delete(note._id)
-        this.notes.splice(note, 1)
       } catch (error) {
         console.log('tag', error)
       }
@@ -130,6 +154,13 @@ export default {
     }).finally(() => {
       this.load = false
     })
+  },
+  computed: {
+    filteredList () {
+      return this.notes.filter(note => {
+        return note.title.toLowerCase().includes(this.search.toLowerCase())
+      })
+    }
   }
 }
 </script>
