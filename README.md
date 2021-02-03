@@ -6,8 +6,9 @@ Gerenciador de notas, na qual é possível armazenar suas informações de forma
 1. Banco de dados: MongoDB online
 2. Backend: Node JS
 3. Frontend: Vue JS
-4. Quantidade dos copos de café: 3 
-5. Inteligência real: Rodrigo Soares
+4. Frameworks utilizados: Vue Js, bootstrap
+5. Quantidade dos copos de café: 3 
+6. Inteligência real: Rodrigo Soares
 
 --------------------------
 *Software necessário para rodar o projeto*
