@@ -6,15 +6,18 @@ module.exports = {
 
   // Listagem das notas
   async index (req, res) {
-    const notes = await Note.find().sort('-createdAt')
+    const notes = await Note.find().sort('-updatedAt')
     return res.json(notes)
   },
 
   // Cadastro de notas
   async store (req, res) {
-    var note = await Note.create(req.body)
-
-    return res.json(note)
+    try {
+      var note = await Note.create(req.body)
+      return res.json(note)
+    } catch (error) {
+      return res.send({error: "Não foi possível cadastrar"})
+    }
   },
 
   // Remoção da nota
