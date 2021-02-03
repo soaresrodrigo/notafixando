@@ -39,6 +39,6 @@ O sistema é bem simples a nível de usabilidade, vamos para algumas funcionalid
 
 -----------------------------------------------
 
-*Esse sistema é contra indicado para menores de 7 anos, pois essas pessoas correm um grande risco de não saber escrever.
+*Esse sistema é contraindicado para menores de 7 anos, pois essas pessoas correm um grande risco de não saber escrever.
 
 #Vamos anotar #Notafixando
