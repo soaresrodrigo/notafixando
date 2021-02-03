@@ -18,7 +18,7 @@
             placeholder="pesquise pelo título da nota"
           ></b-form-input>
             <b-input-group-append>
-              <b-btn v-b-toggle.sidebar-create variant="outline-primary">
+              <b-btn v-b-toggle.sidebar-create variant="outline-primary" @click="repeatTitle()">
                 <b-icon icon="plus"></b-icon>
               </b-btn>
             </b-input-group-append>
@@ -80,10 +80,19 @@
             </b-card-header>
             <b-card-text>{{note.description}}</b-card-text>
             <b-card-text>
+              <b-btn v-b-toggle="'my-collapse' + index" variant="transparent" class="text-right" title="Excluir nota?">
+                <b-icon icon="clock" variant="white"></b-icon>
+              </b-btn>
               <b-btn @click="deleteNote(note, index)" variant="transparent" class="text-right" title="Excluir nota?">
                 <b-icon icon="trash" variant="white"></b-icon>
               </b-btn>
             </b-card-text>
+            <b-collapse :id="'my-collapse' + index">
+              <b-card :text-variant="note.color" bg-variant="light" class="shadow">
+                <span style="font-size:.8em">Criado em: {{note.createdAt | moment('DD/MM/YYYY - HH:mm:ss')}}</span>
+                <!-- <p style="font-size:.8em">Atualizado em: {{note.updatedAt | moment('DD/MM/YYYY - HH:mm:ss')}}</p> -->
+              </b-card>
+            </b-collapse>
           </b-card>
         </div>
       </b-row>
@@ -130,10 +139,11 @@ export default {
       try {
         var nota = await http.post('', this.form)
         this.$root.$emit('bv::toggle::collapse', 'sidebar-create')
-        this.notes.push(nota.data)
+        this.notes.unshift(nota.data)
         this.form.title = ''
         this.form.description = ''
         this.form.color = 'primary'
+        this.search = ''
       } catch (error) {
         console.log('tag', error)
       }
@@ -144,6 +154,11 @@ export default {
         await http.delete(note._id)
       } catch (error) {
         console.log('tag', error)
+      }
+    },
+    repeatTitle () {
+      if (this.search) {
+        this.form.title = this.search
       }
     }
   },
@@ -165,7 +180,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
   .window {
     min-height: 100vh;
     max-width: 100vw;
@@ -177,6 +192,7 @@ export default {
     -webkit-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.22);
     -moz-box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.22);
     box-shadow: 0px 0px 20px 0px rgba(0,0,0,0.22);
+    transition: all .8s;
     border: none;
   }
 </style>
